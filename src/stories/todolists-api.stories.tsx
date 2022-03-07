@@ -1,26 +1,23 @@
 import React, {useEffect, useState} from 'react'
 import axios from 'axios';
+import {settings, todolistApi} from "../api/todolistAPI";
 
 export default {
     title: 'API'
 }
 
-const settings = {
-    withCredentials: true,
-    headers: {
-        'API-KEY': 'b3a9a9e4-0bf1-4009-8ba9-a298b1b9d232'
-    }
 
-}
+
+const todolistId = 'ab66c366-1cc4-43cd-8288-f701238aa2d2';
+const title = '!!!!!!!!!!!!!!!!!!!!!';
+
 
 export const GetTodolists = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-axios.get('https://social-network.samuraijs.com/api/1.1/todo-lists', settings)
-        .then (
-            (res)=>{
+        todolistApi.getTodos()
+        .then((res:any)=>{
                 setState(res.data);
-                debugger
             }
         )
         // здесь мы будем делать запрос и ответ закидывать в стейт.
@@ -32,9 +29,8 @@ axios.get('https://social-network.samuraijs.com/api/1.1/todo-lists', settings)
 export const CreateTodolist = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        axios.post('https://social-network.samuraijs.com/api/1.1/todo-lists',{
-            title: "newTodolist"
-        },settings).then(
+        todolistApi.createTodo(title)
+        .then(
             (res)=>{
                 setState(res.data)
             }
@@ -43,9 +39,17 @@ export const CreateTodolist = () => {
 
     return <div> {JSON.stringify(state)}</div>
 }
+
 export const DeleteTodolist = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
+        todolistApi.deleteTodo(todolistId)
+        .then(
+                (res)=>{
+                    setState(res.data)
+                }
+            )
+
     }, [])
 
     return <div> {JSON.stringify(state)}</div>
@@ -53,6 +57,14 @@ export const DeleteTodolist = () => {
 export const UpdateTodolistTitle = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
+     todolistApi.updateTodo(todolistId,title)
+        .then(
+            (res)=>{
+                setState(res.data)
+            }
+        )
+
+
     }, [])
 
     return <div> {JSON.stringify(state)}</div>
