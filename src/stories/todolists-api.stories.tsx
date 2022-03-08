@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import axios from 'axios';
-import {settings, todolistApi} from "../api/todolistAPI";
+import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
+
 
 export default {
     title: 'API'
@@ -8,15 +8,15 @@ export default {
 
 
 
-const todolistId = 'ab66c366-1cc4-43cd-8288-f701238aa2d2';
-const title = '!!!!!!!!!!!!!!!!!!!!!';
+const todolistId = '866f646a-4f27-4d20-920a-e24f4dd9a9ce';
+const title = 'XXXXXXXXXXXXXXXXX';
 
 
 export const GetTodolists = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        todolistApi.getTodos()
-        .then((res:any)=>{
+        DALLTodolistAPI.getTodos()
+        .then((res)=>{
                 setState(res.data);
             }
         )
@@ -29,7 +29,7 @@ export const GetTodolists = () => {
 export const CreateTodolist = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        todolistApi.createTodo(title)
+        DALLTodolistAPI.createTodo(title)
         .then(
             (res)=>{
                 setState(res.data)
@@ -43,7 +43,7 @@ export const CreateTodolist = () => {
 export const DeleteTodolist = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        todolistApi.deleteTodo(todolistId)
+        DALLTodolistAPI.deleteTodo(todolistId)
         .then(
                 (res)=>{
                     setState(res.data)
@@ -57,7 +57,7 @@ export const DeleteTodolist = () => {
 export const UpdateTodolistTitle = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-     todolistApi.updateTodo(todolistId,title)
+     DALLTodolistAPI.updateTodo( {todolistId,title})
         .then(
             (res)=>{
                 setState(res.data)
