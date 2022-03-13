@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import './App.css';
 import {v1} from "uuid";
 import {ArrayDataType, Todolist} from "./Todolist";
@@ -9,24 +9,40 @@ import {addNewTaskAC, changeStatusAC, changeTitleTaskAC, removeTaskAC, tasksRedu
 import {
     AddTodolistAC,
     ChangeTodolistFilterAC, ChangeTodolistTitleAC,
-    filterValueType,
-    RemoveTodolistAC,
+    filterValueType, GetToDosAC,
+    RemoveTodolistAC, TodolistDomainType,
     todolistsReducer
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
+import {DALLTodolistAPI} from "./api/DALL-todolistAPI";
 
 export type todolistsType = {
     id: string,
     title: string,
     filter: string
 }
+
+
+
+
+
 export type TasksStateType = {
     [key: string]: Array<ArrayDataType>
 }
 
+
 export const AppWithRedux = React.memo( ()=> {
 
+
+
+        useEffect(() => {
+            DALLTodolistAPI.getTodos()
+                .then ( (res)=> {
+                    const todolists = res.data
+              dispatch(GetToDosAC(todolists))
+                } )
+        } ,[])
 
 
 

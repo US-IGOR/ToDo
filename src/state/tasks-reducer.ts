@@ -1,7 +1,7 @@
 import {TasksStateType, todolistsType} from "../App";
 import {v1} from "uuid";
 import {stat} from "fs";
-import {AddTodolistACType, RemoveTodolistACType, todolistID_1, todolistID_2} from "./todolists-reducer";
+import {AddTodolistACType, GetToDosACType, RemoveTodolistACType, todolistID_1, todolistID_2} from "./todolists-reducer";
 
 
 type ActionsType = addNewTaskACType |
@@ -9,7 +9,8 @@ type ActionsType = addNewTaskACType |
     changeStatusACType |
     changeTitleTaskACType |
     AddTodolistACType |
-    RemoveTodolistACType
+    RemoveTodolistACType|
+    GetToDosACType
 
 type addNewTaskACType = {
     type: 'ADD-NEW-TASK',
@@ -37,7 +38,14 @@ type changeTitleTaskACType = {
 
 
 const innitialState: TasksStateType = {
-    [todolistID_1]: [
+
+  //  'todoid1':[],
+  //  'todoid2':[],
+  //  'todoid3':[],
+
+
+
+/*    [todolistID_1]: [
         {id: v1(), title: 'css', isDone: true},
         {id: v1(), title: 'ts', isDone: false},
         {id: v1(), title: 'js', isDone: true}
@@ -46,11 +54,27 @@ const innitialState: TasksStateType = {
         {id: v1(), title: 'bear', isDone: true},
         {id: v1(), title: 'milk', isDone: false},
         {id: v1(), title: 'water', isDone: true}
-    ]
+    ]*/
 }
 
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
+
+        case 'GET-TODOS':{
+            debugger
+            const stateCopy = {...state}
+            action.todolists.forEach ( (t)=> {
+              stateCopy[t.id] = []
+            }  )
+            debugger
+            return stateCopy
+
+
+
+        }
+
+
+
         case 'ADD-NEW-TASK': {
             return {
                 ...state,
