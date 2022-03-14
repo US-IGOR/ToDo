@@ -1,9 +1,11 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {InputClones} from "./InputClones";
 import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {Tasks} from "./Tasks";
+import {getTasksTC} from "./state/tasks-reducer";
+import {useDispatch} from "react-redux";
 
 type TodolistPropsType = {
     title: string,
@@ -28,6 +30,15 @@ export type ArrayDataType = {
 
 
 export const Todolist = React.memo((props: TodolistPropsType) => {
+
+    const dispatch = useDispatch();
+
+
+    useEffect( ()=> {
+        dispatch(getTasksTC(props.id))
+    },[])
+
+
 
     let filteredTodolist = props.data
 

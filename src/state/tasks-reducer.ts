@@ -2,6 +2,8 @@ import {TasksStateType, todolistsType} from "../App";
 import {v1} from "uuid";
 import {stat} from "fs";
 import {AddTodolistACType, GetToDosACType, RemoveTodolistACType, todolistID_1, todolistID_2} from "./todolists-reducer";
+import {Dispatch} from "redux";
+import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
 
 
 type ActionsType = addNewTaskACType |
@@ -61,12 +63,12 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
     switch (action.type) {
 
         case 'GET-TODOS':{
-            debugger
+
             const stateCopy = {...state}
             action.todolists.forEach ( (t)=> {
               stateCopy[t.id] = []
             }  )
-            debugger
+
             return stateCopy
 
 
@@ -159,6 +161,19 @@ export const changeTitleTaskAC = (taskId: string, title: string, todolistId: str
         todolistId
     }
 }
+
+
+export const getTasksTC = (todoId:string) => {
+    return    (dispatch: Dispatch) => {
+
+        DALLTodolistAPI.getTasks(todoId)
+            .then( (res) => {
+                debugger
+            })}
+}
+
+
+
 
 
 

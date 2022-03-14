@@ -9,7 +9,7 @@ import {addNewTaskAC, changeStatusAC, changeTitleTaskAC, removeTaskAC, tasksRedu
 import {
     AddTodolistAC,
     ChangeTodolistFilterAC, ChangeTodolistTitleAC,
-    filterValueType, GetToDosAC,
+    filterValueType, GetToDosAC, getTodosThunk,
     RemoveTodolistAC, TodolistDomainType,
     todolistsReducer
 } from "./state/todolists-reducer";
@@ -35,13 +35,8 @@ export type TasksStateType = {
 export const AppWithRedux = React.memo( ()=> {
 
 
-
         useEffect(() => {
-            DALLTodolistAPI.getTodos()
-                .then ( (res)=> {
-                    const todolists = res.data
-              dispatch(GetToDosAC(todolists))
-                } )
+          dispatch(getTodosThunk)
         } ,[])
 
 

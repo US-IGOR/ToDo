@@ -1,6 +1,7 @@
-
 import {v1} from "uuid";
 import {todolistsType} from "../AppWithRedux";
+import {useEffect} from "react";
+import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
 
 
 type ActionsType =
@@ -34,14 +35,12 @@ type AAAAAAAAAAAAAAAAAAAAAAAA = {
     id: string
     order: number
     title: string
- //   filter?: 'all' | 'active' | 'completed'
+    //   filter?: 'all' | 'active' | 'completed'
 }
 
 
-
-let a : TodolistDomainType
+let a: TodolistDomainType
 let b: todolistsType
-debugger
 
 
 
@@ -80,10 +79,10 @@ export const todolistsReducer = (state: Array<todolistsType> = initialState, act
             return [...state]
         }
         case 'GET-TODOS': {
-    let a: Array<TodolistDomainType > = action.todolists.map((t)=> {
-        return {...t, filter: 'all'}
-    } )
-            debugger
+            let a: Array<TodolistDomainType> = action.todolists.map((t) => {
+                return {...t, filter: 'all'}
+            })
+
             return [...a]
 
         }
@@ -119,12 +118,24 @@ export const ChangeTodolistFilterAC = (filter: filterValueType, id: string) => {
         filter
     } as const
 }
-export const GetToDosAC = (todolists: Array < AAAAAAAAAAAAAAAAAAAAAAAA >) => {
+export const GetToDosAC = (todolists: Array<AAAAAAAAAAAAAAAAAAAAAAAA>) => {
     return {
         type: 'GET-TODOS',
         todolists
     } as const
 }
+
+
+export const getTodosThunk = (dispatch: any, getState: any): void => {
+
+//1.side effects
+             DALLTodolistAPI.getTodos()
+            .then((res) => {
+//2.dispatch actions (thunk)
+            dispatch(GetToDosAC(res.data))
+        })
+}
+
 
 /*export type RemoveTodolistActionType = {
     type: 'REMOVE-TODOLIST',
