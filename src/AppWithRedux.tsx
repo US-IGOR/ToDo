@@ -5,11 +5,18 @@ import {ArrayDataType, Todolist} from "./Todolist";
 import {InputClones} from "./InputClones";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
-import {addNewTaskAC, changeStatusAC, changeTitleTaskAC, removeTaskAC, tasksReducer} from "./state/tasks-reducer";
+import {
+    addNewTaskAC,
+    addTasksTC,
+    changeStatusAC,
+    changeTitleTaskAC,
+    removeTaskAC, removeTasksTC,
+    tasksReducer
+} from "./state/tasks-reducer";
 import {
     AddTodolistAC,
     ChangeTodolistFilterAC, ChangeTodolistTitleAC,
-    filterValueType, GetToDosAC, getTodosThunk,
+    filterValueType, GetToDosAC, getTodosTC,
     RemoveTodolistAC, TodolistDomainType,
     todolistsReducer
 } from "./state/todolists-reducer";
@@ -36,7 +43,7 @@ export const AppWithRedux = React.memo( ()=> {
 
 
         useEffect(() => {
-          dispatch(getTodosThunk)
+          dispatch(getTodosTC())
         } ,[])
 
 
@@ -48,13 +55,24 @@ export const AppWithRedux = React.memo( ()=> {
 
 
     //tasks_func's
-    const addNewTask = useCallback((titleTodolist: string, todoID: string) => {
-        dispatch(addNewTaskAC(titleTodolist, todoID))
-    }, [])
+
+
     const remove = useCallback ((taskID: string, todoID: string) =>  {
+        debugger
+        dispatch   ( removeTasksTC (taskID, todoID))
+    }, [])
+
+    const addNewTask = useCallback((title: string, todoID: string) => {
+        dispatch(addTasksTC(todoID , title))
+    }, [])
+
+
+
+
+   /* const remove = useCallback ((taskID: string, todoID: string) =>  {
         const action = removeTaskAC(taskID, todoID)
         dispatch(action)
-    }, [])
+    }, [])*/
     const changeStatus = useCallback((id: string, isDone: boolean, todoID: string)  => {
         dispatch(changeStatusAC(id, isDone, todoID))
     }, [])

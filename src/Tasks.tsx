@@ -3,6 +3,7 @@ import {Checkbox, IconButton} from "@material-ui/core";
 import {EditableSpan} from "./EditableSpan";
 import {Delete} from "@material-ui/icons";
 import {ArrayDataType} from "./Todolist";
+import {removeTasksTC} from "./state/tasks-reducer";
 
 type TasksPropsType = {
     remove: (x: string, todoID: string) => void,
@@ -22,7 +23,7 @@ export const Tasks = React.memo((props: TasksPropsType) => {
             props.changeTitleTask(props.task.id, newValue, props.todolistId)
         } ,[props.changeTitleTask,props.task.id,props.todolistId])
         const onClickRemoveHandler = () => {
-            props.remove(props.task.id, props.todolistId)
+          props.remove(props.task.id, props.todolistId)
         }
         return <div key={props.task.id} className={props.task.isDone ? 'is-done' : ''}>
             <Checkbox checked={props.task.isDone} onChange={onCheckBoxHandler}/>

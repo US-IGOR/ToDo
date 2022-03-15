@@ -4,6 +4,7 @@ import {stat} from "fs";
 import {AddTodolistACType, GetToDosACType, RemoveTodolistACType, todolistID_1, todolistID_2} from "./todolists-reducer";
 import {Dispatch} from "redux";
 import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
+import {ArrayDataType} from "../Todolist";
 
 
 type ActionsType = addNewTaskACType |
@@ -11,8 +12,9 @@ type ActionsType = addNewTaskACType |
     changeStatusACType |
     changeTitleTaskACType |
     AddTodolistACType |
-    RemoveTodolistACType|
-    GetToDosACType
+    RemoveTodolistACType |
+    GetToDosACType |
+    setTaskACType
 
 type addNewTaskACType = {
     type: 'ADD-NEW-TASK',
@@ -37,46 +39,41 @@ type changeTitleTaskACType = {
     title: string,
     todolistId: string
 }
-
+type setTaskACType = ReturnType<typeof setTaskAC>
 
 const innitialState: TasksStateType = {
 
-  //  'todoid1':[],
-  //  'todoid2':[],
-  //  'todoid3':[],
+    //  'todoid1':[],
+    //  'todoid2':[],
+    //  'todoid3':[],
 
 
-
-/*    [todolistID_1]: [
-        {id: v1(), title: 'css', isDone: true},
-        {id: v1(), title: 'ts', isDone: false},
-        {id: v1(), title: 'js', isDone: true}
-    ],
-    [todolistID_2]: [
-        {id: v1(), title: 'bear', isDone: true},
-        {id: v1(), title: 'milk', isDone: false},
-        {id: v1(), title: 'water', isDone: true}
-    ]*/
+    /*    [todolistID_1]: [
+            {id: v1(), title: 'css', isDone: true},
+            {id: v1(), title: 'ts', isDone: false},
+            {id: v1(), title: 'js', isDone: true}
+        ],
+        [todolistID_2]: [
+            {id: v1(), title: 'bear', isDone: true},
+            {id: v1(), title: 'milk', isDone: false},
+            {id: v1(), title: 'water', isDone: true}
+        ]*/
 }
 
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
 
-        case 'GET-TODOS':{
+        case 'GET-TODOS': {
 
             const stateCopy = {...state}
-            action.todolists.forEach ( (t)=> {
-              stateCopy[t.id] = []
-            }  )
+            action.todolists.forEach((t) => {
+                stateCopy[t.id] = []
+            })
 
             return stateCopy
 
 
-
         }
-
-
-
         case 'ADD-NEW-TASK': {
             return {
                 ...state,
@@ -98,10 +95,7 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             }
             return {...state}
         }
-
-        case
-        'CHANGE-TITLE-TASK'
-        : {
+        case 'CHANGE-TITLE-TASK' : {
             {
                 let todolistTasks = state [action.todolistId]
                 state [action.todolistId] = todolistTasks.map(m => m.id === action.taskId
@@ -110,9 +104,7 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             }
             return {...state}
         }
-        case
-        'ADD-TODOLIST'
-        : {
+        case 'ADD-TODOLIST' : {
             {
                 const stateCopy = {...state}
                 stateCopy[action.todolistId] = [];
@@ -121,16 +113,23 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
                 return stateCopy
             }
         }
-        case
-        'REMOVE-TODOLIST'
-        : {
+
+
+        case 'REMOVE-TODOLIST'        : {
             const stateCopy = {...state};
             delete stateCopy[action.id]
             return stateCopy
         }
+        case 'SET-TASKS': {
+            const stateCopy = {...state};
+            stateCopy[action.todoId] = action.tasks
+            return stateCopy
+        }
+
         default:
             return state;
     }
+
 }
 
 export const addNewTaskAC = (title: string, todolistId: string): addNewTaskACType => {
@@ -161,15 +160,43 @@ export const changeTitleTaskAC = (taskId: string, title: string, todolistId: str
         todolistId
     }
 }
+export const setTaskAC = (todoId: string, tasks: Array<any>) => {
+    return {
+        type: 'SET-TASKS',
+        todoId,
+        tasks,
+    } as const
 
+}
 
-export const getTasksTC = (todoId:string) => {
-    return    (dispatch: Dispatch) => {
-
+export const getTasksTC = (todoId: string) => {
+    return (dispatch: Dispatch) => {
         DALLTodolistAPI.getTasks(todoId)
-            .then( (res) => {
+            .then((res) => {
+                dispatch(setTaskAC(todoId, res.data.items))
+            })
+    }
+}
+
+export const removeTasksTC = ( taskId: string, todoId: string) => {
+    return (dispatch: Dispatch) => {
+        DALLTodolistAPI.removeTasks(todoId, taskId)
+            .then((res) => {
                 debugger
-            })}
+                dispatch(removeTaskAC(taskId, todoId))
+            })
+    }
+}
+
+
+export const addTasksTC = (title: string, todoId: string) => {
+    return (dispatch: Dispatch) => {
+        debugger
+        DALLTodolistAPI.addTasks(title,todoId)
+            .then((res) => {
+                dispatch(addNewTaskAC(title, todoId))
+            })
+    }
 }
 
 

@@ -1,10 +1,11 @@
 import axios from "axios";
+import {removeTasksTC} from "../state/tasks-reducer";
 
 let instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
     withCredentials: true,
     headers: {
-        'API-KEY': 'b3a9a9e4-0bf1-4009-8ba9-a298b1b9d232'
+        'API-KEY': 'e680b8bb-76ea-445a-a706-2c9170f0614d'
     }
 })
 
@@ -33,9 +34,17 @@ export const DALLTodolistAPI = {
 
 
     getTasks(todolistId: string) {
-        return instance.get<GetTasksResponse>(`todo-lists/${todolistId}/tasks`);
+        return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`);
+    },
+    removeTasks(todolistId: string, taskId:string) {
+        return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
     },
 
+    addTasks(todolistId: string,title: string) {
+        return instance.post<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`,{
+            title
+        });
+    },
 
 }
 
@@ -47,7 +56,12 @@ export const DALLTodolistAPI = {
 
 
 
-
+export type ResponseType<D = {}> = {
+    resultCode: number
+    messages: Array<string>
+    fieldsErrors: Array<string>
+    data: D
+}
 
 
 

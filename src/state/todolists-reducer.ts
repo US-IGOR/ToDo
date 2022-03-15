@@ -2,6 +2,7 @@ import {v1} from "uuid";
 import {todolistsType} from "../AppWithRedux";
 import {useEffect} from "react";
 import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
+import {Dispatch} from "redux";
 
 
 type ActionsType =
@@ -126,7 +127,7 @@ export const GetToDosAC = (todolists: Array<AAAAAAAAAAAAAAAAAAAAAAAA>) => {
 }
 
 
-export const getTodosThunk = (dispatch: any, getState: any): void => {
+export const getTodosTC = () => (dispatch: Dispatch, getState: any): void => {
 
 //1.side effects
              DALLTodolistAPI.getTodos()
