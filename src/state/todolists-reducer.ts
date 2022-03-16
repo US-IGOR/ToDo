@@ -30,7 +30,6 @@ export type TodolistDomainType = todolistsType & {
     addedDate: string
 }
 
-
 type AAAAAAAAAAAAAAAAAAAAAAAA = {
     addedDate: string
     id: string
@@ -38,11 +37,6 @@ type AAAAAAAAAAAAAAAAAAAAAAAA = {
     title: string
     //   filter?: 'all' | 'active' | 'completed'
 }
-
-
-let a: TodolistDomainType
-let b: todolistsType
-
 
 
 const initialState: Array<todolistsType> =

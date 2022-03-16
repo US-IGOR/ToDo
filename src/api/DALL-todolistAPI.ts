@@ -1,4 +1,6 @@
-import axios from "axios";
+
+import axios, { AxiosResponse } from 'axios'
+
 import {removeTasksTC} from "../state/tasks-reducer";
 
 let instance = axios.create({
@@ -41,7 +43,8 @@ export const DALLTodolistAPI = {
     },
 
     addTasks(todolistId: string,title: string) {
-        return instance.post<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`,{
+        return instance.post<{ title: string }, AxiosResponse<ResponseType<{ item: TaskType }>>>
+        (`/todo-lists/${todolistId}/tasks`,{
             title
         });
     },
@@ -63,11 +66,6 @@ export type ResponseType<D = {}> = {
     data: D
 }
 
-
-
-
-
-
 type todoType = {
     addedDate: string
     id: string
@@ -80,9 +78,6 @@ type baseType <T = {}> = {
     fieldsErrors:string[],
     data: T
 }
-
-
-
 export enum TaskStatuses {
     New = 0,
     InProgress = 1,

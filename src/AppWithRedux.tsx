@@ -1,28 +1,24 @@
-import React, {useCallback, useEffect, useReducer, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
-import {v1} from "uuid";
-import {ArrayDataType, Todolist} from "./Todolist";
+import { Todolist} from "./Todolist";
 import {InputClones} from "./InputClones";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {
-    addNewTaskAC,
     addTasksTC,
     changeStatusAC,
     changeTitleTaskAC,
-    removeTaskAC, removeTasksTC,
-    tasksReducer
+    removeTasksTC, TaskType,
+
 } from "./state/tasks-reducer";
 import {
     AddTodolistAC,
     ChangeTodolistFilterAC, ChangeTodolistTitleAC,
-    filterValueType, GetToDosAC, getTodosTC,
-    RemoveTodolistAC, TodolistDomainType,
-    todolistsReducer
+    filterValueType, getTodosTC,
+    RemoveTodolistAC
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
-import {DALLTodolistAPI} from "./api/DALL-todolistAPI";
 
 export type todolistsType = {
     id: string,
@@ -35,7 +31,7 @@ export type todolistsType = {
 
 
 export type TasksStateType = {
-    [key: string]: Array<ArrayDataType>
+    [key: string]: Array<TaskType>
 }
 
 
@@ -63,7 +59,8 @@ export const AppWithRedux = React.memo( ()=> {
     }, [])
 
     const addNewTask = useCallback((title: string, todoID: string) => {
-        dispatch(addTasksTC(todoID , title))
+        debugger
+        dispatch(addTasksTC(  todoID ,title ))
     }, [])
 
 

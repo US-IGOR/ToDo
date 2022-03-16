@@ -4,13 +4,13 @@ import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {Tasks} from "./Tasks";
-import {getTasksTC} from "./state/tasks-reducer";
+import {getTasksTC, TaskStatuses, TaskType} from "./state/tasks-reducer";
 import {useDispatch} from "react-redux";
 
 type TodolistPropsType = {
     title: string,
     changeFilter: (value: 'all' | 'active' | 'completed', id: string) => void,
-    data: Array<ArrayDataType>
+    data: Array<TaskType>
     addNewTask: (titleTodolist: string, todoID: string) => void
     filter: string
     id: string
@@ -22,11 +22,7 @@ type TodolistPropsType = {
     changeStatus: (id: string, isDone: boolean, todoID: string) => void
 }
 
-export type ArrayDataType = {
-    id: string;
-    title: string
-    isDone: boolean
-}
+
 
 
 export const Todolist = React.memo((props: TodolistPropsType) => {
@@ -44,10 +40,10 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
 
 
     if (props.filter === 'active') {
-        filteredTodolist = props.data.filter(f => !f.isDone);
+        filteredTodolist = props.data.filter(t => t.status === TaskStatuses.New);
     }
     if (props.filter === 'completed') {
-        filteredTodolist = props.data.filter(f => f.isDone);
+        filteredTodolist = props.data.filter(t => t.status === TaskStatuses.Completed);
     }
 
     console.log('Todolist')
