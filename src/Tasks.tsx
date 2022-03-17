@@ -8,7 +8,7 @@ import {TaskStatuses, TaskType} from "./state/tasks-reducer";
 type TasksPropsType = {
     remove: (x: string, todoID: string) => void,
     changeTitleTask: (id: string, newValue: string, todoID: string) => void
-    changeStatus: (id: string, isDone: boolean, todoID: string) => void
+    changeStatus: (id: string, status: TaskStatuses, todoID: string) => void
     task: TaskType
     todolistId: string
 }
@@ -16,9 +16,12 @@ export const Tasks = React.memo((props: TasksPropsType) => {
 
     console.log('Tasks')
 
-        const onCheckBoxHandler = (e: ChangeEvent<HTMLInputElement>) => {
-            props.changeStatus(props.task.id, e.currentTarget.checked, props.todolistId)
-        }
+        const onCheckBoxHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+            let newIsDoneValue = e.currentTarget.checked
+            props.changeStatus(props.task.id, newIsDoneValue ? TaskStatuses.Completed : TaskStatuses.New, props.todolistId)
+        }, [props.task.id, props.todolistId]);
+
+
         const onChangeTitleHandler =  useCallback( (newValue: string) => {
             props.changeTitleTask(props.task.id, newValue, props.todolistId)
         } ,[props.changeTitleTask,props.task.id,props.todolistId])

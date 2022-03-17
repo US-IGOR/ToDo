@@ -1,13 +1,12 @@
-import {v1} from "uuid";
-import {stat} from "fs";
-import {AddTodolistACType, GetToDosACType, RemoveTodolistACType, todolistID_1, todolistID_2} from "./todolists-reducer";
+import {AddTodolistACType, GetToDosACType, RemoveTodolistACType} from "./todolists-reducer";
 import {Dispatch} from "redux";
 import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
+import {AppRootState} from "./store";
 
 
 type ActionsType = addNewTaskACType |
     removeTaskACType |
-    changeStatusACType |
+    ChangeTaskStatusActionType |
     changeTitleTaskACType |
     AddTodolistACType |
     RemoveTodolistACType |
@@ -34,6 +33,12 @@ type changeTitleTaskACType = {
     todolistId: string
 }
 type setTaskACType = ReturnType<typeof setTaskAC>
+export type ChangeTaskStatusActionType = {
+    type: 'CHANGE-TASK-STATUS',
+    todolistId: string
+    taskId: string
+    status: TaskStatuses
+}
 
 const innitialState: TasksStateType = {
 
@@ -83,15 +88,15 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
                     state[action.todolistId].filter(task => task.id !== action.taskId)
             }
         }
-        case 'CHANGE-STATUS': {
-            {
-                let todolistTasks = state [action.todolistId]
-                state [action.todolistId] = todolistTasks.map(m => m.id === action.taskId
-                    ? {...m, isDone: action.isDone}
-                    : m)
-            }
-            return {...state}
+        case 'CHANGE-TASK-STATUS': {
+            let todolistTasks = state[action.todolistId];
+            let newTasksArray = todolistTasks
+                .map(t => t.id === action.taskId ? {...t, status: action.status} : t);
+
+            state[action.todolistId] = newTasksArray;
+            return ({...state});
         }
+
         case 'CHANGE-TITLE-TASK' : {
             {
                 let todolistTasks = state [action.todolistId]
@@ -140,14 +145,19 @@ export const removeTaskAC = (taskId: string, todoListId: string): removeTaskACTy
         type: 'REMOVE-TASK', taskId: taskId, todolistId: todoListId
     }
 }
-export const changeStatusAC = (idTask: string, isDone: boolean, todolistId: string): changeStatusACType => {
+/*export const changeStatusAC = (idTask: string, isDone: boolean, todolistId: string): changeStatusACType => {
     return {
         type: 'CHANGE-STATUS',
         taskId: idTask,
         isDone,
         todolistId
     }
+}*/
+
+export const changeTaskStatusAC = (taskId: string, status: TaskStatuses, todolistId: string): ChangeTaskStatusActionType => {
+    return {type: 'CHANGE-TASK-STATUS', status, todolistId, taskId}
 }
+
 export const changeTitleTaskAC = (taskId: string, title: string, todolistId: string): changeTitleTaskACType => {
     return {
         type: 'CHANGE-TITLE-TASK',
@@ -185,14 +195,39 @@ export const removeTasksTC = (taskId: string, todoId: string) => {
 
 export const addTasksTC = (todoId: string, title: string,) => {
     return (dispatch: Dispatch) => {
-
         DALLTodolistAPI.addTasks(todoId, title)
             .then((res) => {
-
                 dispatch(addNewTaskAC(res.data.data.item))
             })
     }
 }
+
+export const updTaskStatusTC = (id: string, status: TaskStatuses, todoID: string) =>
+    (dispatch: Dispatch,getState: ()=>AppRootState) => {
+
+    const allAppState= getState()
+    const allTasks = allAppState.tasks
+    const tasksForCurrentTodo = allTasks[todoID]
+    const currentTask = tasksForCurrentTodo.find ( (t)=> {
+        debugger
+        return t.id === id
+    })
+
+
+        debugger
+
+    const model:any = {...currentTask, status:status}
+    DALLTodolistAPI.updateTask(todoID,id , model)
+
+        // min = 3.56
+        .then((res) => {
+          dispatch (changeTaskStatusAC(id, status, todoID))
+        })
+
+}
+
+
+
 
 
 export type TaskType = {
@@ -207,14 +242,12 @@ export type TaskType = {
     order: number
     addedDate: string
 }
-
 export enum TaskStatuses {
     New = 0,
     InProgress = 1,
     Completed = 2,
     Draft = 3
 }
-
 export enum TaskPriorities {
     Low = 0,
     Middle = 1,
@@ -222,7 +255,6 @@ export enum TaskPriorities {
     Urgently = 3,
     Later = 4
 }
-
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }

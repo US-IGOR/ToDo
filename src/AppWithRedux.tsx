@@ -6,9 +6,9 @@ import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography}
 import {Menu} from "@material-ui/icons";
 import {
     addTasksTC,
-    changeStatusAC,
     changeTitleTaskAC,
-    removeTasksTC, TaskType,
+    changeTaskStatusAC,
+    removeTasksTC, TaskType, updTaskStatusTC, TaskStatuses,
 
 } from "./state/tasks-reducer";
 import {
@@ -70,8 +70,8 @@ export const AppWithRedux = React.memo( ()=> {
         const action = removeTaskAC(taskID, todoID)
         dispatch(action)
     }, [])*/
-    const changeStatus = useCallback((id: string, isDone: boolean, todoID: string)  => {
-        dispatch(changeStatusAC(id, isDone, todoID))
+    const changeStatus = useCallback((id: string, status: TaskStatuses, todoID: string)  => {
+        dispatch(updTaskStatusTC(id, status, todoID))
     }, [])
     const changeTitleTask = useCallback((id: string, newTitle: string, todoID: string) =>  {
         dispatch(changeTitleTaskAC(id, newTitle, todoID))
