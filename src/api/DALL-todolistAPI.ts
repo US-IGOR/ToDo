@@ -1,8 +1,10 @@
 
 import axios, { AxiosResponse } from 'axios'
 
-import {removeTasksTC} from "../state/tasks-reducer";
 
+
+
+//axios
 let instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
     withCredentials: true,
@@ -11,29 +13,22 @@ let instance = axios.create({
     }
 })
 
-
-
-
 export const DALLTodolistAPI = {
     getTodos() {
         return instance.get<Array<todoType>>('/todo-lists')
     },
-
     createTodo(title: string) {
         return instance.post<baseType<{item: todoType}>>('/todo-lists', {
             title
         })
     },
-
     deleteTodo(todolistId: string) {
         return instance.delete<baseType>(`/todo-lists/${todolistId}`)
     },
-
     updateTodo(payload: { todolistId: string, title: string }) {
         return instance.put<baseType>(`/todo-lists/${payload.todolistId}`,
             {title: payload.title})
     },
-
 
     getTasks(todolistId: string) {
         return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`);
@@ -41,7 +36,6 @@ export const DALLTodolistAPI = {
     removeTasks(todolistId: string, taskId:string) {
         return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
     },
-
     addTasks(todolistId: string,title: string) {
         return instance.post<{ title: string }, AxiosResponse<ResponseType<{ item: TaskType }>>>
         (`/todo-lists/${todolistId}/tasks`,{
@@ -52,24 +46,16 @@ export const DALLTodolistAPI = {
         return instance.put<UpdateTaskModelType, AxiosResponse<ResponseType<{ item: TaskType }>>>
         (`todo-lists/${todolistId}/tasks/${taskId}`, model);
     }
-
 }
 
 
-
-
-
-
-
-
-
+//types
 export type ResponseType<D = {}> = {
     resultCode: number
     messages: Array<string>
     fieldsErrors: Array<string>
     data: D
 }
-
 type todoType = {
     addedDate: string
     id: string
@@ -88,7 +74,6 @@ export enum TaskStatuses {
     Completed = 2,
     Draft = 3
 }
-
 export enum TaskPriorities {
     Low = 0,
     Middle = 1,
@@ -96,7 +81,6 @@ export enum TaskPriorities {
     Urgently = 3,
     Later = 4
 }
-
 export type TaskType = {
     description: string
     title: string
@@ -122,3 +106,11 @@ type GetTasksResponse = {
     totalCount: number
     items: TaskType[]
 }
+
+
+
+
+
+
+
+

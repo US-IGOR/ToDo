@@ -4,61 +4,7 @@ import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
 import {AppRootState} from "./store";
 
 
-type ActionsType = addNewTaskACType |
-    removeTaskACType |
-    ChangeTaskStatusActionType |
-    changeTitleTaskACType |
-    AddTodolistACType |
-    RemoveTodolistACType |
-    GetToDosACType |
-    setTaskACType
-
-type addNewTaskACType = ReturnType<typeof addNewTaskAC>;
-type removeTaskACType = {
-    type: 'REMOVE-TASK'
-    taskId: string
-    todolistId: string
-}
-type changeStatusACType = {
-    type: 'CHANGE-STATUS'
-    taskId: string,
-    isDone: boolean,
-    todolistId: string
-
-}
-type changeTitleTaskACType = {
-    type: 'CHANGE-TITLE-TASK',
-    taskId: string,
-    title: string,
-    todolistId: string
-}
-type setTaskACType = ReturnType<typeof setTaskAC>
-export type ChangeTaskStatusActionType = {
-    type: 'CHANGE-TASK-STATUS',
-    todolistId: string
-    taskId: string
-    status: TaskStatuses
-}
-
-const innitialState: TasksStateType = {
-
-    //  'todoid1':[],
-    //  'todoid2':[],
-    //  'todoid3':[],
-
-
-    /*    [todolistID_1]: [
-            {id: v1(), title: 'css', isDone: true},
-            {id: v1(), title: 'ts', isDone: false},
-            {id: v1(), title: 'js', isDone: true}
-        ],
-        [todolistID_2]: [
-            {id: v1(), title: 'bear', isDone: true},
-            {id: v1(), title: 'milk', isDone: false},
-            {id: v1(), title: 'water', isDone: true}
-        ]*/
-}
-
+//REDUCER
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
 
@@ -96,7 +42,6 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             state[action.todolistId] = newTasksArray;
             return ({...state});
         }
-
         case 'CHANGE-TITLE-TASK' : {
             {
                 let todolistTasks = state [action.todolistId]
@@ -115,8 +60,6 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
                 return stateCopy
             }
         }
-
-
         case 'REMOVE-TODOLIST'        : {
             const stateCopy = {...state};
             delete stateCopy[action.id]
@@ -134,6 +77,8 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
 
 }
 
+
+//TC&AC
 export const addNewTaskAC = (task: TaskType) => {
     return {
         type: 'ADD-NEW-TASK',
@@ -145,19 +90,9 @@ export const removeTaskAC = (taskId: string, todoListId: string): removeTaskACTy
         type: 'REMOVE-TASK', taskId: taskId, todolistId: todoListId
     }
 }
-/*export const changeStatusAC = (idTask: string, isDone: boolean, todolistId: string): changeStatusACType => {
-    return {
-        type: 'CHANGE-STATUS',
-        taskId: idTask,
-        isDone,
-        todolistId
-    }
-}*/
-
 export const changeTaskStatusAC = (taskId: string, status: TaskStatuses, todolistId: string): ChangeTaskStatusActionType => {
     return {type: 'CHANGE-TASK-STATUS', status, todolistId, taskId}
 }
-
 export const changeTitleTaskAC = (taskId: string, title: string, todolistId: string): changeTitleTaskACType => {
     return {
         type: 'CHANGE-TITLE-TASK',
@@ -182,7 +117,6 @@ export const getTasksTC = (todoId: string) => {
             })
     }
 }
-
 export const removeTasksTC = (taskId: string, todoId: string) => {
     return (dispatch: Dispatch) => {
         DALLTodolistAPI.removeTasks(todoId, taskId)
@@ -191,45 +125,76 @@ export const removeTasksTC = (taskId: string, todoId: string) => {
             })
     }
 }
-
-
 export const addTasksTC = (todoId: string, title: string,) => {
-    return (dispatch: Dispatch) => {
+    return (dispatch: Dispatch<ActionsType>) => {
         DALLTodolistAPI.addTasks(todoId, title)
             .then((res) => {
                 dispatch(addNewTaskAC(res.data.data.item))
             })
     }
 }
-
 export const updTaskStatusTC = (id: string, status: TaskStatuses, todoID: string) =>
-    (dispatch: Dispatch,getState: ()=>AppRootState) => {
+    (dispatch: Dispatch<ActionsType>, getState: () => AppRootState) => {
 
-    const allAppState= getState()
-    const allTasks = allAppState.tasks
-    const tasksForCurrentTodo = allTasks[todoID]
-    const currentTask = tasksForCurrentTodo.find ( (t)=> {
-        debugger
-        return t.id === id
-    })
-
-
-        debugger
-
-    const model:any = {...currentTask, status:status}
-    DALLTodolistAPI.updateTask(todoID,id , model)
-
-        // min = 3.56
-        .then((res) => {
-          dispatch (changeTaskStatusAC(id, status, todoID))
+        const allAppState = getState()
+        const allTasks = allAppState.tasks
+        const tasksForCurrentTodo = allTasks[todoID]
+        const currentTask = tasksForCurrentTodo.find((t) => {
+            debugger
+            return t.id === id
         })
 
+
+        debugger
+
+        const model: any = {...currentTask, status: status}
+        DALLTodolistAPI.updateTask(todoID, id, model)
+
+            // min = 3.56
+            .then((res) => {
+                dispatch(changeTaskStatusAC(id, status, todoID))
+            })
+
+    }
+
+
+//types
+
+type ActionsType = addNewTaskACType |
+    removeTaskACType |
+    ChangeTaskStatusActionType |
+    changeTitleTaskACType |
+    AddTodolistACType |
+    RemoveTodolistACType |
+    GetToDosACType |
+    setTaskACType
+
+type addNewTaskACType = ReturnType<typeof addNewTaskAC>;
+type removeTaskACType = {
+    type: 'REMOVE-TASK'
+    taskId: string
+    todolistId: string
 }
+type changeStatusACType = {
+    type: 'CHANGE-STATUS'
+    taskId: string,
+    isDone: boolean,
+    todolistId: string
 
-
-
-
-
+}
+type changeTitleTaskACType = {
+    type: 'CHANGE-TITLE-TASK',
+    taskId: string,
+    title: string,
+    todolistId: string
+}
+type setTaskACType = ReturnType<typeof setTaskAC>
+export type ChangeTaskStatusActionType = {
+    type: 'CHANGE-TASK-STATUS',
+    todolistId: string
+    taskId: string
+    status: TaskStatuses
+}
 export type TaskType = {
     description: string
     title: string
@@ -258,7 +223,32 @@ export enum TaskPriorities {
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
+const innitialState: TasksStateType = {
 
+    //  'todoid1':[],
+    //  'todoid2':[],
+    //  'todoid3':[],
+
+
+    /*    [todolistID_1]: [
+            {id: v1(), title: 'css', isDone: true},
+            {id: v1(), title: 'ts', isDone: false},
+            {id: v1(), title: 'js', isDone: true}
+        ],
+        [todolistID_2]: [
+            {id: v1(), title: 'bear', isDone: true},
+            {id: v1(), title: 'milk', isDone: false},
+            {id: v1(), title: 'water', isDone: true}
+        ]*/
+}
+export type UpdateDomainTaskModelType = {
+    title?: string
+    description?: string
+    status?: TaskStatuses
+    priority?: TaskPriorities
+    startDate?: string
+    deadline?: string
+}
 
 
 

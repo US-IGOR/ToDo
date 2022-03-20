@@ -5,47 +5,8 @@ import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
 import {Dispatch} from "redux";
 
 
-type ActionsType =
-    | RemoveTodolistACType
-    | AddTodolistACType
-    | ChangeTodolistTitleACType
-    | GetToDosACType
-    | ChangeTodolistFilterACType
 
-
-export type RemoveTodolistACType = ReturnType<typeof RemoveTodolistAC>
-export type AddTodolistACType = ReturnType<typeof AddTodolistAC>
-export type ChangeTodolistTitleACType = ReturnType<typeof ChangeTodolistTitleAC>
-export type ChangeTodolistFilterACType = ReturnType<typeof ChangeTodolistFilterAC>
-export type GetToDosACType = ReturnType<typeof GetToDosAC>
-
-
-export let todolistID_1 = v1()
-export let todolistID_2 = v1()
-
-export type filterValueType = 'all' | 'active' | 'completed';
-export type TodolistDomainType = todolistsType & {
-    filter?: filterValueType
-    order: number
-    addedDate: string
-}
-
-type AAAAAAAAAAAAAAAAAAAAAAAA = {
-    addedDate: string
-    id: string
-    order: number
-    title: string
-    //   filter?: 'all' | 'active' | 'completed'
-}
-
-
-const initialState: Array<todolistsType> =
-    [
-        /*        {id: todolistID_1, title: '*****state from Redux*****', filter: 'all'},
-                {id: todolistID_2, title: 'What to buy?', filter: 'active'}*/
-    ]
-
-
+//REDUCER
 export const todolistsReducer = (state: Array<todolistsType> = initialState, action: ActionsType): Array<todolistsType> => {
     switch (action.type) {
         case 'REMOVE-TODOLIST': {
@@ -61,31 +22,28 @@ export const todolistsReducer = (state: Array<todolistsType> = initialState, act
                 ...state
             ]
         }
-        case 'CHANGE-TODOLIST-TITLE': {
-            const todolist = state.find(f => f.id === action.id)
-            if (todolist)
-                todolist.title = action.title
-            return [...state]
-        }
-        case 'CHANGE-TODOLIST-FILTER': {
-            const todolist = state.find(f => f.id === action.id)
-            if (todolist)
-                todolist.filter = action.filter;
-            return [...state]
-        }
-        case 'GET-TODOS': {
-            let a: Array<TodolistDomainType> = action.todolists.map((t) => {
-                return {...t, filter: 'all'}
-            })
+        case 'CHANGE-TODOLIST-TITLE':
+       return state.map(tl=> tl.id === action.id ? {...tl , title:action.title} : tl )
+        case 'CHANGE-TODOLIST-FILTER':
+            debugger
+            return state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
 
-            return [...a]
+        case 'GET-TODOS':
+            return action.todolists.map(tl => ({...tl, filter:'all'}) )
 
-        }
+
         default:
             return state;
     }
 }
 
+//TC&AC
+export const GetToDosAC = (todolists: Array<toDoFromServerType>) => {
+    return {
+        type: 'GET-TODOS',
+        todolists
+    } as const
+}
 export const RemoveTodolistAC = (id: string) => {
     return {
         type: 'REMOVE-TODOLIST',
@@ -106,31 +64,79 @@ export const ChangeTodolistTitleAC = (id: string, title: string) => {
         title
     } as const
 }
-export const ChangeTodolistFilterAC = (filter: filterValueType, id: string) => {
-    return {
-        type: 'CHANGE-TODOLIST-FILTER',
-        id,
-        filter
-    } as const
-}
-export const GetToDosAC = (todolists: Array<AAAAAAAAAAAAAAAAAAAAAAAA>) => {
-    return {
-        type: 'GET-TODOS',
-        todolists
-    } as const
-}
 
+export const ChangeTodolistFilterAC = (filter: filterValueType, todolistId: string) => ({
+    type: 'CHANGE-TODOLIST-FILTER',
+    id:todolistId,
+    filter
+} as const)
 
 export const getTodosTC = () => (dispatch: Dispatch, getState: any): void => {
-
 //1.side effects
-             DALLTodolistAPI.getTodos()
-            .then((res) => {
+    DALLTodolistAPI.getTodos()
+        .then((res) => {
 //2.dispatch actions (thunk)
             dispatch(GetToDosAC(res.data))
         })
 }
+export const addTodosTC = (title:string) => (dispatch: Dispatch): void => {
+    DALLTodolistAPI.createTodo(title)
+        .then((res) => {
+            dispatch(AddTodolistAC(res.data.data.item.title))
+        })
+}
+export const RemoveTodosTC = (todoId:string) => (dispatch: Dispatch): void => {
+    DALLTodolistAPI.deleteTodo(todoId)
+        .then((res) => {
+            dispatch(RemoveTodolistAC(todoId))
+        })
+}
+export const changeTodoTitleTC = (todolistId: string, title: string) => (dispatch: Dispatch): void => {
+    DALLTodolistAPI.updateTodo({ todolistId, title })
+        .then((res) => {
+            dispatch(ChangeTodolistTitleAC(todolistId,title))
+        })
+}
 
+
+//types
+type ActionsType =
+    | RemoveTodolistACType
+    | AddTodolistACType
+    | ChangeTodolistTitleACType
+    | GetToDosACType
+    | ChangeTodolistFilterACType
+
+
+export type RemoveTodolistACType = ReturnType<typeof RemoveTodolistAC>
+export type AddTodolistACType = ReturnType<typeof AddTodolistAC>
+export type ChangeTodolistTitleACType = ReturnType<typeof ChangeTodolistTitleAC>
+export type ChangeTodolistFilterACType = ReturnType<typeof ChangeTodolistFilterAC>
+export type GetToDosACType = ReturnType<typeof GetToDosAC>
+
+
+
+export type filterValueType = 'all' | 'active' | 'completed';
+export type TodolistDomainType = todolistsType & {
+    filter?: filterValueType
+    order: number
+    addedDate: string
+}
+
+type toDoFromServerType = {
+    addedDate: string
+    id: string
+    order: number
+    title: string
+    //   filter?: 'all' | 'active' | 'completed'
+}
+
+
+const initialState: Array<todolistsType> =
+    [
+        /*        {id: todolistID_1, title: '*****state from Redux*****', filter: 'all'},
+                {id: todolistID_2, title: 'What to buy?', filter: 'active'}*/
+    ]
 
 /*export type RemoveTodolistActionType = {
     type: 'REMOVE-TODOLIST',
