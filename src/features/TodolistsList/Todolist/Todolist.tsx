@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect} from "react";
-import {InputClones} from "./InputClones";
-import {EditableSpan} from "./EditableSpan";
+import {AddItemForm} from "../../../components/AddItemForm/AddItemForm";
+import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {Tasks} from "./Tasks";
-import {getTasksTC, TaskStatuses, TaskType} from "./state/tasks-reducer";
+import {Tasks} from "./Task/Tasks";
+import {getTasksTC, TaskStatuses, TaskType} from "../tasks-reducer";
 import {useDispatch} from "react-redux";
 
 type TodolistPropsType = {
@@ -78,7 +78,7 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
                 </h3>
             </div>
             <div>
-                <InputClones addNewItem={addTask}/>
+                <AddItemForm addNewItem={addTask}/>
             </div>
             <div>
                 {

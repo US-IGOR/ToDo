@@ -1,7 +1,7 @@
 import {v1} from "uuid";
-import {todolistsType} from "../AppWithRedux";
+import {todolistsType} from "../../app/App";
 import {useEffect} from "react";
-import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
+import {DALLTodolistAPI} from "../../api/DALL-todolistAPI";
 import {Dispatch} from "redux";
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {InputClones} from './InputClones';
+import {AddItemForm} from '../components/AddItemForm/AddItemForm';
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta, ComponentStory} from "@storybook/react";
 
@@ -7,16 +7,16 @@ import {ComponentMeta, ComponentStory} from "@storybook/react";
 
 
 export default {
-    title: "InputClones Component",
-    component: InputClones,
+    title: "AddItemForm Component",
+    component: AddItemForm,
     argTypes: {
         addNewItem: {
             description: 'description-button inside from clicked'
         },
     },
-} as ComponentMeta<typeof InputClones>;
+} as ComponentMeta<typeof AddItemForm>;
 
-const Template: ComponentStory<typeof InputClones> = (args) => <InputClones {...args} />;
+const Template: ComponentStory<typeof AddItemForm> = (args) => <AddItemForm {...args} />;
 
 
 

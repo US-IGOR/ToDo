@@ -1,7 +1,7 @@
 import {AddTodolistACType, GetToDosACType, RemoveTodolistACType} from "./todolists-reducer";
 import {Dispatch} from "redux";
-import {DALLTodolistAPI} from "../api/DALL-todolistAPI";
-import {AppRootState} from "./store";
+import {DALLTodolistAPI} from "../../api/DALL-todolistAPI";
+import {AppRootState} from "../../app/store";
 
 
 //REDUCER

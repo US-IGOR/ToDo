@@ -5,7 +5,7 @@ import {Add} from "@material-ui/icons";
 type InputClonesType = {
     addNewItem: (titleTodolist: string) => void
 }
-export const InputClones = React.memo( (props: InputClonesType) => {
+export const AddItemForm = React.memo( (props: InputClonesType) => {
 
     console.log('InputClones1 render')
 

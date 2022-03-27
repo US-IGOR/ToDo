@@ -1,27 +1,26 @@
 import React, {useCallback, useEffect} from 'react';
-import './App.css';
-import {Todolist} from "./Todolist";
-import {InputClones} from "./InputClones";
+import {Todolist} from "../features/TodolistsList/Todolist/Todolist";
+import {AddItemForm} from "../components/AddItemForm/AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {
     addTasksTC,
     changeTitleTaskAC,
     removeTasksTC, TaskType, updTaskStatusTC, TaskStatuses
-} from "./state/tasks-reducer";
+} from "../features/TodolistsList/tasks-reducer";
 import {
     AddTodolistAC, addTodosTC,
     ChangeTodolistFilterAC, ChangeTodolistTitleAC, changeTodoTitleTC,
     filterValueType, getTodosTC,
     RemoveTodolistAC, RemoveTodosTC
-} from "./state/todolists-reducer";
+} from "../features/TodolistsList/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {AppRootState} from "./state/store";
+import {AppRootState} from "./store";
 
 
 
 //APP
-export const AppWithRedux = React.memo(() => {
+export const App = React.memo(() => {
 
     useEffect(() => {
         dispatch(getTodosTC())
@@ -65,6 +64,11 @@ export const AppWithRedux = React.memo(() => {
     }, [])
 
 
+
+
+
+
+
     return (<div className="App">
             <AppBar position="static">
                 <Toolbar>
@@ -79,7 +83,7 @@ export const AppWithRedux = React.memo(() => {
             </AppBar>
             <Container fixed>
                 <Grid container style={{padding: "20px"}}>
-                    <InputClones addNewItem={addTodolist}/>
+                    <AddItemForm addNewItem={addTodolist}/>
                 </Grid>
                 <Grid container spacing={3}>
                     {
@@ -125,4 +129,4 @@ export type TasksStateType = {
 }
 
 
-export default AppWithRedux;
+export default App;
