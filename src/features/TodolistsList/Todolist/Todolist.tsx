@@ -6,21 +6,8 @@ import {Delete} from "@material-ui/icons";
 import {Tasks} from "./Task/Tasks";
 import {getTasksTC, TaskStatuses, TaskType} from "../tasks-reducer";
 import {useDispatch} from "react-redux";
+import {RequestStatusType} from "../../../app/app-reducer";
 
-type TodolistPropsType = {
-    title: string,
-    changeFilter: (value: 'all' | 'active' | 'completed', id: string) => void,
-    data: Array<TaskType>
-    addNewTask: (titleTodolist: string, todoID: string) => void
-    filter: string
-    id: string
-    deleteTodolist: (todoID: string) => void
-    changeTodolistTitle: (id: string, newTitle: string) => void
-
-    remove: (x: string, todoID: string) => void,
-    changeTitleTask: (id: string, newValue: string, todoID: string) => void
-    changeStatus: (id: string, status: TaskStatuses, todoID: string) => void
-}
 
 
 
@@ -71,7 +58,7 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
         <div>
             <div>
                 <h3><EditableSpan title={props.title} change={changeTodolistTitle}/>
-                    <IconButton onClick={onRemoveTodoListHandler}>
+                    <IconButton onClick={onRemoveTodoListHandler} disabled={true}>
                         <Delete/>
                     </IconButton>
                 </h3>
@@ -114,5 +101,22 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
 
 })
 
+
+
+type TodolistPropsType = {
+    title: string,
+    changeFilter: (value: 'all' | 'active' | 'completed', id: string) => void,
+    data: Array<TaskType>
+    addNewTask: (titleTodolist: string, todoID: string) => void
+    filter: string
+    id: string
+    deleteTodolist: (todoID: string) => void
+    changeTodolistTitle: (id: string, newTitle: string) => void
+    entityStatus: RequestStatusType
+
+    remove: (x: string, todoID: string) => void,
+    changeTitleTask: (id: string, newValue: string, todoID: string) => void
+    changeStatus: (id: string, status: TaskStatuses, todoID: string) => void
+}
 
 

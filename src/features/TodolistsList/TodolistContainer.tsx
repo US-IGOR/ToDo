@@ -6,8 +6,8 @@ import {
     addTodosTC,
     ChangeTodolistFilterAC,
     changeTodoTitleTC,
-    filterValueType, getTodosTC,
-    RemoveTodosTC
+    filterValuesType, getTodosTC,
+    RemoveTodosTC, TodolistDomainType
 } from "./todolists-reducer";
 import {TasksStateType, todolistsType} from "../../app/App";
 import {Grid, Paper} from "@material-ui/core";
@@ -17,16 +17,18 @@ import {AddItemForm} from "../../components/AddItemForm/AddItemForm";
 
 export const TodolistContainer: React.FC = () => {
 
+    const dispatch = useDispatch();
+    const todolists = useSelector<AppRootState, Array<TodolistDomainType>>(state => state.todoLists)
+    const taskObj = useSelector<AppRootState, TasksStateType>(state => state.tasks)
+
     useEffect(() => {
         dispatch(getTodosTC())
     }, [])
 
-
-    const dispatch = useDispatch();
-    const todolists = useSelector<AppRootState, Array<todolistsType>>(state => state.todoLists)
-    const taskObj = useSelector<AppRootState, TasksStateType>(state => state.tasks)
-
 //tasks_func's
+
+
+
     const remove = useCallback((taskID: string, todoID: string) => {
         debugger
         dispatch(removeTasksTC(taskID, todoID))
@@ -44,7 +46,7 @@ export const TodolistContainer: React.FC = () => {
 
 
 //toDOLists_func's
-    const changeFilter = useCallback((filter: filterValueType, todolistId: string) => {
+    const changeFilter = useCallback((filter: filterValuesType, todolistId: string) => {
         debugger
         dispatch(ChangeTodolistFilterAC(filter, todolistId))
     }, [])
@@ -75,13 +77,15 @@ export const TodolistContainer: React.FC = () => {
                         <Paper elevation={10} style={{padding: "10px"}}>
                             <Todolist title={m.title}
                                       key={m.id}
+                                      filter={m.filter}
+                                      id={m.id}
+                                      entityStatus={m.entityStatus}
+
                                       data={filteredTodolist}
                                       remove={remove}
                                       changeFilter={changeFilter}
                                       addNewTask={addNewTask}
                                       changeStatus={changeStatus}
-                                      filter={m.filter}
-                                      id={m.id}
                                       deleteTodolist={deleteTodolist}
                                       changeTodolistTitle={changeTodolistTitle}
                                       changeTitleTask={changeTitleTask}

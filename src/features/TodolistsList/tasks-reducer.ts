@@ -8,19 +8,7 @@ import {AppRootState} from "../../app/store";
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
 
-        case 'GET-TODOS': {
-
-            const stateCopy = {...state}
-            action.todolists.forEach((t) => {
-                stateCopy[t.id] = []
-            })
-
-            return stateCopy
-
-
-        }
         case 'ADD-NEW-TASK': {
-
             debugger
             const stateCopy = {...state};
             const tasks = stateCopy[action.task.todoListId]
@@ -42,6 +30,11 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             state[action.todolistId] = newTasksArray;
             return ({...state});
         }
+        case 'SET-TASKS': {
+            const stateCopy = {...state};
+            stateCopy[action.todoId] = action.tasks
+            return stateCopy
+        }
         case 'CHANGE-TITLE-TASK' : {
             {
                 let todolistTasks = state [action.todolistId]
@@ -51,26 +44,26 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             }
             return {...state}
         }
-        case 'ADD-TODOLIST' : {
-            {
-                const stateCopy = {...state}
-                stateCopy[action.todolistId] = [];
 
 
-                return stateCopy
-            }
+
+        case 'GET-TODOS': {
+
+            const stateCopy = {...state}
+            action.todolists.forEach((t) => {
+                stateCopy[t.id] = []
+            })
+
+            return stateCopy
+
+
         }
+        case 'ADD-TODOLIST' :  return {...state, [action.todolist.id]: []}
         case 'REMOVE-TODOLIST'        : {
             const stateCopy = {...state};
             delete stateCopy[action.id]
             return stateCopy
         }
-        case 'SET-TASKS': {
-            const stateCopy = {...state};
-            stateCopy[action.todoId] = action.tasks
-            return stateCopy
-        }
-
         default:
             return state;
     }
@@ -108,6 +101,9 @@ export const setTaskAC = (todoId: string, tasks: Array<any>) => {
         tasks,
     } as const
 }
+
+
+
 
 export const getTasksTC = (todoId: string) => {
     return (dispatch: Dispatch) => {
