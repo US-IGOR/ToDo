@@ -14,7 +14,7 @@ type TasksPropsType = {
 }
 export const Tasks = React.memo((props: TasksPropsType) => {
 
-    console.log('Tasks')
+
 
         const onCheckBoxHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
             let newIsDoneValue = e.currentTarget.checked

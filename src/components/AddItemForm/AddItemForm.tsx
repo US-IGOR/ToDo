@@ -7,7 +7,7 @@ type InputClonesType = {
 }
 export const AddItemForm = React.memo( (props: InputClonesType) => {
 
-    console.log('InputClones1 render')
+
 
     let [titleTodolist, setTitleTodolist] = useState<string>('')
     let [error, setError] = useState<string | null>('')

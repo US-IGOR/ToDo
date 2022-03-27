@@ -46,7 +46,6 @@ export const Todolist = React.memo((props: TodolistPropsType) => {
         filteredTodolist = props.data.filter(t => t.status === TaskStatuses.Completed);
     }
 
-    console.log('Todolist')
 
     const onAllClickHandler = useCallback(() => {
         props.changeFilter('all', props.id)
