@@ -13,12 +13,15 @@ import {TasksStateType, todolistsType} from "../../app/App";
 import {Grid, Paper} from "@material-ui/core";
 import {Todolist} from "./Todolist/Todolist";
 import {AddItemForm} from "../../components/AddItemForm/AddItemForm";
+import {InitialStateType} from "../../app/app-reducer";
 
 
 export const TodolistContainer: React.FC = () => {
 
     const dispatch = useDispatch();
     const todolists = useSelector<AppRootState, Array<TodolistDomainType>>(state => state.todoLists)
+    const disableAddTodoButon = useSelector<AppRootState, boolean> (state =>
+        state.app.disableAddNewTodoButton)
     const taskObj = useSelector<AppRootState, TasksStateType>(state => state.tasks)
 
     useEffect(() => {
@@ -30,11 +33,11 @@ export const TodolistContainer: React.FC = () => {
 
 
     const remove = useCallback((taskID: string, todoID: string) => {
-        debugger
+
         dispatch(removeTasksTC(taskID, todoID))
     }, [])
     const addNewTask = useCallback((title: string, todoID: string) => {
-        debugger
+
         dispatch(addTasksTC(todoID, title))
     }, [])
     const changeStatus = useCallback((id: string, status: TaskStatuses, todoID: string) => {
@@ -47,7 +50,7 @@ export const TodolistContainer: React.FC = () => {
 
 //toDOLists_func's
     const changeFilter = useCallback((filter: filterValuesType, todolistId: string) => {
-        debugger
+
         dispatch(ChangeTodolistFilterAC(filter, todolistId))
     }, [])
     const deleteTodolist = useCallback((todoID: string) => {
@@ -61,9 +64,12 @@ export const TodolistContainer: React.FC = () => {
     }, [])
 
 
+
+
     return <>
         <Grid container style={{padding: "20px"}}>
-            <AddItemForm addNewItem={addTodolist}/>
+
+            <AddItemForm addNewItem={addTodolist} disabled={disableAddTodoButon}/>
         </Grid>
         <Grid container spacing={3}>
 
@@ -80,6 +86,7 @@ export const TodolistContainer: React.FC = () => {
                                       filter={m.filter}
                                       id={m.id}
                                       entityStatus={m.entityStatus}
+
 
                                       data={filteredTodolist}
                                       remove={remove}

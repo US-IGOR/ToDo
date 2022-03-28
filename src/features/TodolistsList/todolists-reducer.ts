@@ -6,7 +6,7 @@ import {Dispatch} from "redux";
 import {
     RequestStatusType,
     setAppStatusAC,
-    setAppStatusActionType,
+    setAppStatusActionType, setDisableAddNewTodoButtonAC, setDisableAddNewTodoButtonType, setErrorStatusAC,
     setErrorStatusActionType
 } from "../../app/app-reducer";
 
@@ -36,6 +36,8 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
             return state.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
         case 'GET-TODOS':
             return action.todolists.map(tl => ({...tl, filter: 'all', entityStatus:'idle'}))
+        case 'SET-DISABLED-TODOLISTS':
+            return state.map(tl => tl.id === action.idTodo ? {...tl, entityStatus: action.entityStatus}:tl)
 
         default:
             return state;
@@ -90,15 +92,29 @@ export const getTodosTC = () => (dispatch: Dispatch<ActionsType>, getState: any)
         })
 }
 export const RemoveTodosTC = (todoId: string) => (dispatch: Dispatch<ActionsType>): void => {
+    dispatch(changeTodolistEntityStatusAC(todoId,'loading'))
     DALLTodolistAPI.deleteTodo(todoId)
         .then((res) => {
             dispatch(RemoveTodolistAC(todoId))
         })
 }
 export const addTodosTC = (title: string) => (dispatch: Dispatch<ActionsType>): void => {
+    dispatch(setAppStatusAC('loading'))
+    dispatch(setDisableAddNewTodoButtonAC(true))
+
     DALLTodolistAPI.createTodo(title)
         .then((res) => {
-            dispatch(AddTodolistAC(res.data.data.item))
+            if (res.data.resultCode === 0 ) {
+                dispatch(AddTodolistAC(res.data.data.item))
+            } else {
+                dispatch(setErrorStatusAC(res.data.messages[0]))
+            }
+
+
+
+
+            dispatch(setAppStatusAC('idle'))
+            dispatch(setDisableAddNewTodoButtonAC(false))
         })
 }
 export const changeTodoTitleTC = (todolistId: string, title: string) => (dispatch: Dispatch<ActionsType>): void => {
@@ -122,6 +138,8 @@ type ActionsType =
     | ChangeTodolistTitleACType
     | GetToDosACType
     | ChangeTodolistFilterACType
+    | setDisableAddNewTodoButtonType
+    | setErrorStatusActionType
 
 
 export type RemoveTodolistACType = ReturnType<typeof RemoveTodolistAC>

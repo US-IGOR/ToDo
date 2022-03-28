@@ -1,9 +1,12 @@
 import React, {ChangeEvent, useState} from "react";
 import {Button, IconButton, TextField} from "@material-ui/core";
 import {Add} from "@material-ui/icons";
+import {RequestStatusType} from "../../app/app-reducer";
 
 type InputClonesType = {
-    addNewItem: (titleTodolist: string) => void
+    addNewItem: (titleTodolist: string) => void,
+    disabled : boolean
+
 }
 export const AddItemForm = React.memo( (props: InputClonesType) => {
 
@@ -32,6 +35,7 @@ export const AddItemForm = React.memo( (props: InputClonesType) => {
 
 
     return (<div>
+
             <TextField value={titleTodolist}
                        variant={"outlined"}
                        label={'add todooo'}
@@ -40,10 +44,12 @@ export const AddItemForm = React.memo( (props: InputClonesType) => {
                        error={!!error}
                        helperText={error}
 
+
+
             />
 
 
-            <IconButton onClick={addNewTask} color={"primary"}><Add/></IconButton>
+            <IconButton onClick={addNewTask} color={"primary"} disabled={props.disabled}><Add/></IconButton>
         </div>
     )
 });

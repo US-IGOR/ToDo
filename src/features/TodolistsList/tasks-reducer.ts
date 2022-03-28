@@ -9,7 +9,6 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
     switch (action.type) {
 
         case 'ADD-NEW-TASK': {
-            debugger
             const stateCopy = {...state};
             const tasks = stateCopy[action.task.todoListId]
             const newTask = [action.task, ...tasks]
@@ -26,7 +25,6 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             let todolistTasks = state[action.todolistId];
             let newTasksArray = todolistTasks
                 .map(t => t.id === action.taskId ? {...t, status: action.status} : t);
-
             state[action.todolistId] = newTasksArray;
             return ({...state});
         }
@@ -44,19 +42,13 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             }
             return {...state}
         }
-
-
-
         case 'GET-TODOS': {
 
             const stateCopy = {...state}
             action.todolists.forEach((t) => {
                 stateCopy[t.id] = []
             })
-
             return stateCopy
-
-
         }
         case 'ADD-TODOLIST' :  return {...state, [action.todolist.id]: []}
         case 'REMOVE-TODOLIST'        : {
@@ -68,6 +60,13 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
             return state;
     }
 
+}
+
+
+enum ResponseStatus {
+    'success'=0,
+    'error'=1,
+    'captcha'=10
 }
 
 
@@ -136,12 +135,12 @@ export const updTaskStatusTC = (id: string, status: TaskStatuses, todoID: string
         const allTasks = allAppState.tasks
         const tasksForCurrentTodo = allTasks[todoID]
         const currentTask = tasksForCurrentTodo.find((t) => {
-            debugger
+
             return t.id === id
         })
 
 
-        debugger
+
 
         const model: any = {...currentTask, status: status}
         DALLTodolistAPI.updateTask(todoID, id, model)
