@@ -3,8 +3,8 @@ export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 const initialState = {
     status: 'loading' as RequestStatusType,
     error: 'error' as string | null ,
-    disableAddNewTodoButton: false,
-    disableAddNewTaskButton: false,
+    disableAddNewTodoButton: false
+
 
 }
 
@@ -25,7 +25,7 @@ export const appReducer = (state: InitialStateType = initialState, action: Actio
 }
 
 export const setAppStatusAC = (status:RequestStatusType) => ({type: 'APP/SET-STATUS', status}as const)
-export const setErrorStatusAC = (error: string | null) => ({type: 'APP/SET-ERROR', error}as const)
+export const setErrorStatusAC = (error: string | null) => ({type: 'APP/SET-ERROR', error} as const)
 export const setDisableAddNewTodoButtonAC = (dis:boolean) => ({type: 'APP/SET-DISABLE-ADD-NEW-TODO-BUTTON',dis}as const)
 
 

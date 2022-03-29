@@ -101,7 +101,6 @@ export const RemoveTodosTC = (todoId: string) => (dispatch: Dispatch<ActionsType
 export const addTodosTC = (title: string) => (dispatch: Dispatch<ActionsType>): void => {
     dispatch(setAppStatusAC('loading'))
     dispatch(setDisableAddNewTodoButtonAC(true))
-
     DALLTodolistAPI.createTodo(title)
         .then((res) => {
             if (res.data.resultCode === 0 ) {
@@ -109,10 +108,6 @@ export const addTodosTC = (title: string) => (dispatch: Dispatch<ActionsType>): 
             } else {
                 dispatch(setErrorStatusAC(res.data.messages[0]))
             }
-
-
-
-
             dispatch(setAppStatusAC('idle'))
             dispatch(setDisableAddNewTodoButtonAC(false))
         })

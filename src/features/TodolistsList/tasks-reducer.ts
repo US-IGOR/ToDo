@@ -1,33 +1,43 @@
-import {AddTodolistACType, GetToDosACType, RemoveTodolistACType} from "./todolists-reducer";
+import {AddTodolistACType, filterValuesType, GetToDosACType, RemoveTodolistACType} from "./todolists-reducer";
 import {Dispatch} from "redux";
 import {DALLTodolistAPI} from "../../api/DALL-todolistAPI";
 import {AppRootState} from "../../app/store";
+import {
+    RequestStatusType,
+    setAppStatusAC,
+    setAppStatusActionType, setDisableAddNewTodoButtonType,
+    setErrorStatusAC,
+    setErrorStatusActionType
+} from "../../app/app-reducer";
+import {AxiosError} from "axios";
+import {todolistsType} from "../../app/App";
+import {useDispatch} from "react-redux";
 
 
 //REDUCER
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
 
-        case 'ADD-NEW-TASK': {
-            const stateCopy = {...state};
+        case 'ADD-NEW-TASK':
+         /*   const stateCopy = {...state};
             const tasks = stateCopy[action.task.todoListId]
             const newTask = [action.task, ...tasks]
             stateCopy[action.task.todoListId] = newTask
-            return stateCopy
-        }
-        case 'REMOVE-TASK': {
-            return {
+            return stateCopy*/
+            return {...state, [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]}
+        case 'REMOVE-TASK':
+         /*   return {
                 ...state, [action.todolistId]:
                     state[action.todolistId].filter(task => task.id !== action.taskId)
-            }
-        }
-        case 'CHANGE-TASK-STATUS': {
+            }*/
+            return {...state, [action.todolistId]: state[action.todolistId].filter(t => t.id !== action.taskId)}
+        case 'CHANGE-TASK-STATUS':
             let todolistTasks = state[action.todolistId];
             let newTasksArray = todolistTasks
                 .map(t => t.id === action.taskId ? {...t, status: action.status} : t);
             state[action.todolistId] = newTasksArray;
             return ({...state});
-        }
+
         case 'SET-TASKS': {
             const stateCopy = {...state};
             stateCopy[action.todoId] = action.tasks
@@ -63,11 +73,6 @@ export const tasksReducer = (state: TasksStateType = innitialState, action: Acti
 }
 
 
-enum ResponseStatus {
-    'success'=0,
-    'error'=1,
-    'captcha'=10
-}
 
 
 //TC&AC
@@ -101,31 +106,51 @@ export const setTaskAC = (todoId: string, tasks: Array<any>) => {
     } as const
 }
 
+const dispatch = useDispatch()
 
-
+enum ResponseStatus {
+    'success'=0,
+    'error'=1,
+    'captcha'=10
+}
 
 export const getTasksTC = (todoId: string) => {
+    dispatch(setAppStatusAC('loading'))
     return (dispatch: Dispatch) => {
         DALLTodolistAPI.getTasks(todoId)
             .then((res) => {
                 dispatch(setTaskAC(todoId, res.data.items))
             })
+        dispatch(setAppStatusAC('idle'))
     }
 }
 export const removeTasksTC = (taskId: string, todoId: string) => {
     return (dispatch: Dispatch) => {
+        dispatch(setAppStatusAC('loading'))
         DALLTodolistAPI.removeTasks(todoId, taskId)
             .then((res) => {
                 dispatch(removeTaskAC(taskId, todoId))
             })
+        dispatch(setAppStatusAC('idle'))
     }
 }
 export const addTasksTC = (todoId: string, title: string,) => {
     return (dispatch: Dispatch<ActionsType>) => {
+        dispatch(setAppStatusAC('loading'))
         DALLTodolistAPI.addTasks(todoId, title)
             .then((res) => {
-                dispatch(addNewTaskAC(res.data.data.item))
+                if (res.data.resultCode === ResponseStatus.success ) {
+                    dispatch(addNewTaskAC(res.data.data.item))
+                } else {
+                    dispatch(setErrorStatusAC(res.data.messages[0]))
+                }
+                dispatch(setAppStatusAC('idle'))
             })
+            .catch((error:AxiosError)=>{
+                dispatch(setErrorStatusAC(error.message))
+                dispatch(setAppStatusAC('idle'))
+            })
+            . finally(() => dispatch(setAppStatusAC('idle')))
     }
 }
 export const updTaskStatusTC = (id: string, status: TaskStatuses, todoID: string) =>
@@ -162,7 +187,11 @@ type ActionsType = addNewTaskACType |
     AddTodolistACType |
     RemoveTodolistACType |
     GetToDosACType |
-    setTaskACType
+    setTaskACType |
+    setAppStatusActionType|
+    setErrorStatusActionType|
+    setDisableAddNewTodoButtonType
+
 
 type addNewTaskACType = ReturnType<typeof addNewTaskAC>;
 type removeTaskACType = {
@@ -218,6 +247,11 @@ export enum TaskPriorities {
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
+
+
+
+
+
 const innitialState: TasksStateType = {
 
     //  'todoid1':[],
