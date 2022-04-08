@@ -81,7 +81,7 @@ export const changeTodolistEntityStatusAC = (idTodo: string, entityStatus: Reque
 
 
 
-export const getTodosTC = () => (dispatch: Dispatch<ActionsType>, getState: any): void => {
+export const getTodosTC = () => (dispatch: Dispatch<ActionsType>): void => {
 //1.side effects
    dispatch(setAppStatusAC('loading'))
     DALLTodolistAPI.getTodos()
@@ -96,6 +96,7 @@ export const RemoveTodosTC = (todoId: string) => (dispatch: Dispatch<ActionsType
     DALLTodolistAPI.deleteTodo(todoId)
         .then((res) => {
             dispatch(RemoveTodolistAC(todoId))
+            dispatch(setAppStatusAC('succeeded'));
         })
 }
 export const addTodosTC = (title: string) => (dispatch: Dispatch<ActionsType>): void => {
@@ -108,7 +109,7 @@ export const addTodosTC = (title: string) => (dispatch: Dispatch<ActionsType>): 
             } else {
                 dispatch(setErrorStatusAC(res.data.messages[0]))
             }
-            dispatch(setAppStatusAC('idle'))
+            dispatch(setAppStatusAC('succeeded'));
             dispatch(setDisableAddNewTodoButtonAC(false))
         })
 }

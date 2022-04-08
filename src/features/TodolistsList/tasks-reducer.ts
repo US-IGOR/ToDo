@@ -14,6 +14,8 @@ import {todolistsType} from "../../app/App";
 import {useDispatch} from "react-redux";
 
 
+
+
 //REDUCER
 export const tasksReducer = (state: TasksStateType = innitialState, action: ActionsType): TasksStateType => {
     switch (action.type) {
@@ -99,6 +101,9 @@ export const changeTitleTaskAC = (taskId: string, title: string, todolistId: str
     }
 }
 export const setTaskAC = (todoId: string, tasks: Array<any>) => {
+
+
+
     return {
         type: 'SET-TASKS',
         todoId,
@@ -106,7 +111,7 @@ export const setTaskAC = (todoId: string, tasks: Array<any>) => {
     } as const
 }
 
-const dispatch = useDispatch()
+
 
 enum ResponseStatus {
     'success'=0,
@@ -114,19 +119,20 @@ enum ResponseStatus {
     'captcha'=10
 }
 
-export const getTasksTC = (todoId: string) => {
-    dispatch(setAppStatusAC('loading'))
+export const getTasksTC = (todoId: string) => (dispatch: Dispatch<ActionsType>) =>{
     return (dispatch: Dispatch) => {
+        dispatch(setAppStatusAC('loading'))
         DALLTodolistAPI.getTasks(todoId)
             .then((res) => {
                 dispatch(setTaskAC(todoId, res.data.items))
             })
-        dispatch(setAppStatusAC('idle'))
+        dispatch(setAppStatusAC('succeeded'))
     }
+
 }
 export const removeTasksTC = (taskId: string, todoId: string) => {
-    return (dispatch: Dispatch) => {
-        dispatch(setAppStatusAC('loading'))
+    return (dispatch: Dispatch<ActionsType>) => {
+    //    dispatch(setAppStatusAC('loading'))
         DALLTodolistAPI.removeTasks(todoId, taskId)
             .then((res) => {
                 dispatch(removeTaskAC(taskId, todoId))
@@ -136,7 +142,7 @@ export const removeTasksTC = (taskId: string, todoId: string) => {
 }
 export const addTasksTC = (todoId: string, title: string,) => {
     return (dispatch: Dispatch<ActionsType>) => {
-        dispatch(setAppStatusAC('loading'))
+  //      dispatch(setAppStatusAC('loading'))
         DALLTodolistAPI.addTasks(todoId, title)
             .then((res) => {
                 if (res.data.resultCode === ResponseStatus.success ) {
